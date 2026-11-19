@@ -11,7 +11,15 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   title: "DevCompass — найдите стек для своей идеи",
   description:
-    "DevCompass помогает начинающим разработчикам подобрать технологии для IT-проекта: три вопроса, понятный стартовый стек и объяснение каждого выбора.",
+    "DevCompass помогает начинающим разработчикам подобрать технологии для IT-проекта: два вопроса, понятный стартовый стек и объяснение каждого выбора.",
+  openGraph: {
+    title: "DevCompass — найдите стек для своей идеи",
+    description:
+      "Два вопроса — стартовый стек, объяснение каждого инструмента и план первых шагов.",
+    siteName: "DevCompass",
+    locale: "ru_RU",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -4,6 +4,9 @@ export type SavedPlan = {
   project: string;
   experience: string;
   features: string[];
+  kind?: string;
+  experienceIndex?: number;
+  featureIds?: string[];
   tools: { name: string; role: string }[];
   notes: string[];
   plan: string[];

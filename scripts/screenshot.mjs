@@ -106,10 +106,11 @@ async function main() {
     await waitForChrome(port, 15000);
     const list = await (await fetch(`http://127.0.0.1:${port}/json/list`)).json();
     const target = list.find((t) => t.type === "page");
-    const { ws, send } = await connect(target.webSocketDebuggerUrl);
+    const { ws, send, events } = await connect(target.webSocketDebuggerUrl);
 
     await send("Page.enable");
     await send("Runtime.enable");
+    await send("Log.enable");
     await send("Emulation.setDeviceMetricsOverride", {
       width: opts.width,
       height: opts.height,
@@ -184,6 +185,22 @@ async function main() {
     await fs.mkdir(path.dirname(outPath), { recursive: true });
     await fs.writeFile(outPath, Buffer.from(shot.data, "base64"));
     console.error(`saved ${outPath} (${Date.now() - started}ms)`);
+    // surface page-side errors (exceptions, console.error, failed requests)
+    const problems = events.filter((event) => {
+      if (event.method === "Runtime.exceptionThrown") return true;
+      if (event.method === "Log.entryAdded") return event.params?.entry?.level === "error";
+      if (event.method === "Runtime.consoleAPICalled") return event.params?.type === "error";
+      return false;
+    });
+    if (problems.length) {
+      for (const problem of problems.slice(0, 8)) {
+        const text =
+          problem.params?.exceptionDetails?.text ||
+          problem.params?.entry?.text ||
+          problem.params?.args?.map((arg) => arg.value ?? arg.description).join(" ");
+        console.error("page error:", String(text).slice(0, 300));
+      }
+    }
     ws.close();
   } finally {
     chrome.kill();

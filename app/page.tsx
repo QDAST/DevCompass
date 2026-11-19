@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Suspense } from "react";
+import { featuresByProject, projects, type ProjectKind } from "@/lib/data";
 import HomeHero from "./components/HomeHero";
 import SiteFooter from "./components/SiteFooter";
 import SiteHeader from "./components/SiteHeader";
@@ -28,7 +30,34 @@ const catalogLayers = [
   { num: "03", title: "Инструменты и хостинг", hint: "Как выпускать" },
 ];
 
-export default function Home() {
+type HomeSearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
+
+async function Builder({ searchParams }: { searchParams: HomeSearchParams }) {
+  const params = await searchParams;
+  const kindParam = typeof params.kind === "string" ? params.kind : "";
+  const kind = projects.some((project) => project.id === kindParam)
+    ? (kindParam as ProjectKind)
+    : undefined;
+  const experienceParam = Number(
+    typeof params.experience === "string" ? params.experience : "",
+  );
+  const featuresParam = (
+    typeof params.features === "string" ? params.features.split(",") : []
+  ).filter((id) => (kind ? featuresByProject[kind].includes(id) : false));
+  const initial = kind
+    ? {
+        kind,
+        experience: Number.isFinite(experienceParam)
+          ? Math.min(2, Math.max(0, Math.trunc(experienceParam)))
+          : 0,
+        features: featuresParam,
+      }
+    : undefined;
+
+  return <Wizard initial={initial} />;
+}
+
+export default function Home({ searchParams }: { searchParams: HomeSearchParams }) {
   return (
     <>
       <SiteHeader />
@@ -49,7 +78,15 @@ export default function Home() {
                 технологий для первой версии проекта.
               </p>
             </div>
-            <Wizard />
+            <Suspense
+              fallback={
+                <div className="wizard-loading" role="status">
+                  Собираем мастер подбора…
+                </div>
+              }
+            >
+              <Builder searchParams={searchParams} />
+            </Suspense>
           </div>
         </section>
 

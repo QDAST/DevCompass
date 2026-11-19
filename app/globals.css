@@ -599,6 +599,19 @@ ol {
   padding: 20px 0 40px;
 }
 
+.wizard-loading {
+  display: grid;
+  place-items: center;
+  min-height: 420px;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-card);
+  color: var(--muted);
+  font-size: 14px;
+}
+
 .wizard {
   overflow: hidden;
   border: 1px solid var(--line);

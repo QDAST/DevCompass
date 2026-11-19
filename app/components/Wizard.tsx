@@ -24,11 +24,27 @@ function plural(count: number, one: string, few: string, many: string) {
   return many;
 }
 
-export default function Wizard() {
+type Prefill = {
+  kind?: ProjectKind;
+  experience?: number;
+  features?: string[];
+};
+
+export default function Wizard({ initial }: { initial?: Prefill }) {
+  const initialKind =
+    initial?.kind && projects.some((project) => project.id === initial.kind)
+      ? initial.kind
+      : "website";
   const [step, setStep] = useState(0);
-  const [kind, setKind] = useState<ProjectKind>("website");
-  const [experience, setExperience] = useState(0);
-  const [selected, setSelected] = useState<string[]>([]);
+  const [kind, setKind] = useState<ProjectKind>(initialKind);
+  const [experience, setExperience] = useState(() =>
+    Math.min(2, Math.max(0, Math.trunc(initial?.experience ?? 0))),
+  );
+  const [selected, setSelected] = useState<string[]>(() =>
+    (initial?.features ?? []).filter((id) =>
+      featuresByProject[initialKind].includes(id),
+    ),
+  );
   const [status, setStatus] = useState<Status>(null);
   const wizardRef = useRef<HTMLDivElement>(null);
 
@@ -117,6 +133,9 @@ export default function Wizard() {
       project: project.label,
       experience: experienceOptions[experience].label,
       features: featureLabels as string[],
+      kind,
+      experienceIndex: experience,
+      featureIds: activeFeatures,
       tools: recommendation.tools.map((tool) => ({
         name: tool.name,
         role: tool.role,

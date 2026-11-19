@@ -8,7 +8,17 @@ import {
   getPlansSnapshot,
   subscribePlans,
   writePlans,
+  type SavedPlan,
 } from "@/lib/plans";
+
+function restoreHref(plan: SavedPlan) {
+  if (!plan.kind) return "/#builder";
+  const params = new URLSearchParams();
+  params.set("kind", plan.kind);
+  params.set("experience", String(plan.experienceIndex ?? 0));
+  if (plan.featureIds?.length) params.set("features", plan.featureIds.join(","));
+  return `/?${params.toString()}#builder`;
+}
 
 export default function SavedClient() {
   const plans = useSyncExternalStore(
@@ -67,7 +77,7 @@ export default function SavedClient() {
             ))}
           </div>
           <div className="saved-actions">
-            <Link className="btn btn-dark btn-sm" href="/#builder">
+            <Link className="btn btn-dark btn-sm" href={restoreHref(plan)}>
               Собрать похожий
             </Link>
           </div>

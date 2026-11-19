@@ -1,36 +1,45 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DevCompass
 
-## Getting Started
+Помощник по выбору технологий для IT-проекта: два вопроса — стартовый стек,
+объяснение каждого инструмента и план первых шагов.
 
-First, run the development server:
+## Возможности
+
+- трёхшаговый мастер подбора: тип проекта → опыт и функции → стек;
+- объяснимая рекомендация для 6 типов проектов и 31 инструмента;
+- результат: причины выбора, план старта, копирование и скачивание `.md`;
+- сохранение подборок в браузере (`localStorage`) на странице «Мои планы»;
+- каталог технологий с поиском и фильтрами по категориям;
+- адаптивная вёрстка, доступность с клавиатуры, `prefers-reduced-motion`.
+
+## Стек
+
+Next.js 16 (App Router, Turbopack), React 19, TypeScript, Tailwind CSS 4
+(как нормализация; основной стиль — собственный CSS в `app/globals.css`),
+Manrope через `next/font/google`. Внешних API и базы данных нет.
+
+## Запуск
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Открыть http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build
+npm run lint
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Структура
 
-## Learn More
+- `app/page.tsx` — главная: hero, мастер, «как это работает», анонс каталога;
+- `app/components` — шапка, футер, hero и клиентский мастер;
+- `app/catalog` — каталог и клиентский поиск;
+- `app/saved` — сохранённые планы;
+- `lib/data.ts` — инструменты, проекты и правила рекомендаций;
+- `lib/plans.ts` — тип плана и работа с `localStorage`;
+- `scripts/screenshot.mjs` — скриншоты через headless Chrome (CDP, без зависимостей).
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Подробное описание задумки, дизайна и этапов — в `../план.txt`.
